@@ -3,10 +3,11 @@ import styled from "styled-components";
 import backgroundImage from "../../assets/images/background.jpg";
 import logo from "../../assets/images/logo.png";
 import colors from "../../utils/style/colors";
+import { useNavigate } from "react-router-dom";
+import { useEffect,useState } from "react";
+import {jwtDecode} from "jwt-decode";
 
 
-
-const Login = () => {
 
     const GlobalPage = styled.div`
     display: flex;
@@ -132,6 +133,76 @@ const Login = () => {
         }
     `;
 
+   
+const Login = ({setToken, setAuthorizedRoutes}) => {
+
+
+        const navigate = useNavigate();
+
+     const [username, setUsername] = useState("");
+     const [password, setPassword] = useState("");
+     const [dataToken, setDataToken] = useState("");
+     
+
+      const handleSubmit = async (event) => {
+        event.preventDefault();
+        //appel API pour le token
+        const apiUrl = process.env.REACT_APP_API_URL;
+        
+        const response = await fetch(`${apiUrl}/api/login_check`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+          
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (response.ok) {
+            const dataToken = await response.json();
+            setDataToken(dataToken.token);
+         
+        } else if (response.status === 401 || response.status === 400) {
+            navigate("/", {
+                state: {
+                    message: "Identifiants non reconnus.\nVeuillez réessayer.",
+                },
+            });
+        } else if (response.status === 500) {
+            navigate("/", {
+                state: {
+                    message:
+                        "Erreur du serveur.\nVeuillez réessayer plus tard.",
+                },
+            });
+        } else {
+            navigate("/", {
+                state: {
+                    message: "Erreur.\nVeuillez réessayer plus tard.",
+                },
+            });
+        }
+    }
+
+    useEffect(() => {
+        if (dataToken) {
+            const decodedPayload = jwtDecode(dataToken, { payload: true });
+            
+            if (decodedPayload.roles[0] === "ROLE_ADMIN") {
+                setToken(dataToken);
+                setAuthorizedRoutes(decodedPayload.roles); 
+                navigate("/admin/dashboard");
+            }
+            if (decodedPayload.roles[0] === "ROLE_USER") {
+                setToken(dataToken);
+                setAuthorizedRoutes(decodedPayload.roles); 
+                navigate("/user/dashboard/"+decodedPayload.username);
+            }
+        }
+    }, [dataToken, navigate, setToken, setAuthorizedRoutes]);
+    
+
     return (
 
         <GlobalPage>
@@ -149,15 +220,15 @@ const Login = () => {
                 <LoginContainer>
                     
                     <form
-                    //   onSubmit={handleSubmit}
+                      onSubmit={handleSubmit}
                     >
                         <div className="formGroup">
                             <label htmlFor="username">Email de connexion</label>
                             <input
                                 type="text"
                                 id="username"
-                                //   value={username}
-                                //   onChange={(e) => setUsername(e.target.value)}
+                                  value={username}
+                                  onChange={(e) => setUsername(e.target.value)}
                                 required
                             />
                         </div>
@@ -166,8 +237,8 @@ const Login = () => {
                             <input
                                 type="password"
                                 id="password"
-                                //   value={password}
-                                //   onChange={(e) => setPassword(e.target.value)}
+                                  value={password}
+                                  onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
                         <button className="btnLogin" type="submit">

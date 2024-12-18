@@ -1,0 +1,17 @@
+nelmio_cors:
+    defaults:
+        allow_credentials: true
+        allow_origin: ['https://localhost:3000']  # Autoriser votre application React
+        allow_headers: ['Content-Type']
+        expose_headers: [ 'Content-Disposition']
+        allow_methods: ['POST', 'GET', 'OPTIONS','DELETE', 'PUT']
+        max_age: 3600
+
+    paths:
+        '^/drive_API/':  # Ajustez le chemin selon votre API
+            allow_credentials: true
+            allow_origin: ['https://localhost:3000']  # Autoriser votre application React
+            allow_headers: ['Content-Type']
+            expose_headers: [ 'Content-Disposition']
+            allow_methods: ['POST', 'GET', 'OPTIONS','DELETE','PUT']
+            max_age: 3600

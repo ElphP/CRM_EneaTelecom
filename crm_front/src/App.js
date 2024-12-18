@@ -4,43 +4,63 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import ProtectedRoute from "./components/ProtectedRoute";
 import Admin from "./pages/Admin";
 import User from "./pages/User";
-import Client from "./pages/Client";
+// import Client from "./pages/Client";
 import Login from "./pages/Login";
 import Unauthorized from "./pages/Unauthorized";
 import "./App.css";
+import { useState } from "react";
 
 const App = () => {
-  const token = localStorage.getItem("authToken");
+  const [token,setToken]= useState(null);
+  const [authorizedRoutes,setAuthorizedRoutes]= useState([]);
 
+ 
   return (
+
       <Router>
           <Routes>
               {/* Route publique */}
-              <Route path="/login" element={<Login />} />
+              <Route
+                  path="/login"
+                  element={
+                      <Login
+                          setToken={setToken}
+                          setAuthorizedRoutes={setAuthorizedRoutes}
+                      />
+                  }
+              />
 
               {/* Routes protégées */}
-              {/* <Route
-          path="/Admin"
-          element={<ProtectedRoute allowedRoles={['Admin']} token={token} />}
-        > */}
-              <Route path="/Admin" element={<Admin />} />
-              {/* </Route> */}
               <Route
-                  path="/User/:userID"
+                  path="/admin/:content"
                   element={
-                      <ProtectedRoute allowedRoles={["User"]} token={token} />
+                      <ProtectedRoute
+                          allowedRoles={authorizedRoutes}
+                          token={token}
+                      >
+                          <Admin />
+                      </ProtectedRoute>
                   }
-              >
-                  <Route index element={<User />} />
-              </Route>
+              />
               <Route
+                  path="/user/:userId"
+                  element={
+                      <ProtectedRoute
+                          allowedRoles={authorizedRoutes}
+                          token={token}
+                      >
+                          <User />
+                      </ProtectedRoute>
+                  }
+              />
+              {/* <Route
                   path="/Client/:clientID"
                   element={
                       <ProtectedRoute allowedRoles={["Client"]} token={token} />
                   }
               >
                   <Route index element={<Client />} />
-              </Route>
+              </Route> */}
 
               {/* Route pour accès non autorisé */}
               <Route path="/unauthorized" element={<Unauthorized />} />
@@ -48,7 +68,9 @@ const App = () => {
               <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
       </Router>
+  
   );
 };
 
 export default App;
+

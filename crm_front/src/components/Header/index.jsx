@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import colors from "../../utils/style/colors";
 import styled from "styled-components";
 import logo from "../../assets/images/logo.png";
@@ -11,6 +11,7 @@ const HeaderContainer = styled.header`
     justify-content: space-between;
     align-items: center;
     background-color: ${colors.dark};
+    padding: 10px;
     img {
         width: 200px;
         margin-left: 100px;
@@ -30,16 +31,18 @@ const HeaderContainer = styled.header`
     }
 `;
 
-export default function Header() {
+ function Header() {
   return (
       <>
           <HeaderContainer>
           
                   <img src={logo} alt="logoEneaTelecom" />
-                  <h1>CRM Enea Telecom</h1>
+                  <h1>CRM EneaTelecom</h1>
                   <div></div>
               
           </HeaderContainer>
       </>
   );
 }
+
+export default Header;

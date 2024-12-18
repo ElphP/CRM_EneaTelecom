@@ -1,8 +1,8 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
-import{ jwtDecode } from "jwt-decode";
+import { Navigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-const ProtectedRoute = ({ allowedRoles, token }) => {
+const ProtectedRoute = ({ allowedRoles, token, children }) => {
     if (!token) {
         return <Navigate to="/login" replace />;
     }
@@ -16,13 +16,16 @@ const ProtectedRoute = ({ allowedRoles, token }) => {
         }
 
         // Vérifiez si l'utilisateur a le rôle requis
-        if (allowedRoles && !allowedRoles.includes(decodedToken.role)) {
-            return <Navigate to="/unauthorized" replace />;
+        if (
+            allowedRoles &&
+            !allowedRoles.some((role) => decodedToken.roles.includes(role))
+        ) {
+            return <Navigate to="/Unauthorized" replace />;
         }
 
-        return <Outlet />;
+        return children;
     } catch (error) {
-        // Token invalide
+        console.error("Erreur lors du décodage du token :", error);
         return <Navigate to="/login" replace />;
     }
 };

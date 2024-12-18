@@ -2,16 +2,39 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\User:
+            algorithm: auto
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            lazy: true
-            provider: users_in_memory
+        
+        # Pare-feu pour l'authentification via JSON pour obtenir un token JWT
+        login:
+            pattern:  ^/api/login_check
+            stateless: true
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+         # Pare-feu principal pour protéger les routes de l'API
+        api:
+            pattern: ^/api
+            stateless: false
+            jwt: ~ 
+            # context: app  # Important pour garantir une session partagée entre différents firewalls
+                
+
+        # main:
+        #     lazy: true
+        #     provider: app_user_provider
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -22,8 +45,18 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+         # Route accessible aux utilisateurs ayant le rôle ADMIN
+        - { path: ^/api/admin, roles: ROLE_ADMIN }
+
+        # Route accessible aux utilisateurs authentifiés ayant le rôle USER
+        - { path: ^/api/user, roles: ROLE_USER }
+
+        # Route accessible aux utilisateurs authentifiés ayant le rôle CLIENT
+        - { path: ^/api/client, roles: ROLE_CLIENT }
+
+        # Les autres routes de l'API nécessitent d'être authentifié
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
