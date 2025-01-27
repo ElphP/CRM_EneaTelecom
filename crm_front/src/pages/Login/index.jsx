@@ -70,7 +70,6 @@ import {jwtDecode} from "jwt-decode";
         align-items: center;
         justify-content: center;
 
-       
         form {
             display: flex;
             flex-direction: column;
@@ -92,7 +91,7 @@ import {jwtDecode} from "jwt-decode";
         .btnLogin {
             padding: 10px 15px;
             border-radius: 4px;
-            border: none;
+            border: 1px solid ${colors.secondary};
             background-color: ${colors.secondary};
             color: white;
             cursor: pointer;
@@ -116,12 +115,12 @@ import {jwtDecode} from "jwt-decode";
             padding: 8px;
             border-radius: 4px;
             border: 1px solid ${colors.secondary};
-
+            color: ${colors.secondary};
             font-weight: bolder;
             cursor: pointer;
             margin-top: 30px;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
         }
 
         .btnOubliMDP:hover {
@@ -129,7 +128,9 @@ import {jwtDecode} from "jwt-decode";
             color: white;
         }
         .btnLogin:hover {
-            color: ${colors.primary};
+            background-color: white;
+            color: ${colors.secondary};
+            border: 1px solid black;
         }
     `;
 
@@ -142,7 +143,7 @@ const Login = ({setToken, setAuthorizedRoutes}) => {
      const [username, setUsername] = useState("");
      const [password, setPassword] = useState("");
      const [dataToken, setDataToken] = useState("");
-     
+     const [message, setMessage] = useState("");
 
       const handleSubmit = async (event) => {
         event.preventDefault();
@@ -162,26 +163,23 @@ const Login = ({setToken, setAuthorizedRoutes}) => {
         if (response.ok) {
             const dataToken = await response.json();
             setDataToken(dataToken.token);
+            setMessage("");
          
         } else if (response.status === 401 || response.status === 400) {
-            navigate("/", {
-                state: {
-                    message: "Identifiants non reconnus.\nVeuillez réessayer.",
-                },
-            });
+            
+                    setMessage("Identifiants non reconnus.\nVeuillez réessayer.");
+            
+            
         } else if (response.status === 500) {
-            navigate("/", {
-                state: {
-                    message:
-                        "Erreur du serveur.\nVeuillez réessayer plus tard.",
-                },
-            });
+         
+                   
+                        setMessage("Erreur du serveur.\nVeuillez réessayer plus tard.");
+            
         } else {
-            navigate("/", {
-                state: {
-                    message: "Erreur.\nVeuillez réessayer plus tard.",
-                },
-            });
+        
+                    setMessage("Erreur.\nVeuillez réessayer plus tard.")
+            
+            ;
         }
     }
 
@@ -253,7 +251,7 @@ const Login = ({setToken, setAuthorizedRoutes}) => {
                         </div>
                     </form>
                     <div>
-                        {/* {message && <div className="error-message">{message}</div>} */}
+                        {message && <div className="error-message">{message}</div>}
                     </div>
                 </LoginContainer>
             </StyledLoginPage>

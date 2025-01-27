@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import ContactCard from "../../components/ContactCard";
-import imgPlus from "../../assets/images/icones/plus.png";
-import colors from "../../utils/style/colors";
-import ModalContact from "../Modales/ModalContact";
+import ContactCard from "../../Contact/ContactCard";
+import imgPlus from "../../../assets/images/icones/plus.png";
+import colors from "../../../utils/style/colors";
+import ModalContact from "../../Modales/ModalContact";
 
 const ContactDiv = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
+    padding-top: 30px;
     h1 {
         padding: 10px 80px;
     }
@@ -40,7 +41,7 @@ const StyledFilters = styled.div`
         padding-left: 50px;
         font-weight: bold;
     }
-    select  {
+    select {
         width: 200px;
         padding: 5px;
     }
@@ -65,9 +66,15 @@ const ContactAdd = styled.div`
     }
 `;
 
-const Contacts = ({ dataObjects, setSelectedEnt, setSelectedAnt, listeEnt, setRefreshFlag }) => {
- 
-    
+const Contacts = ({
+    dataObjects,
+    setSelectedEnt,
+    setSelectedAnt,
+    listeEnt,
+    setRefreshFlag,
+    selectedAnt,
+    selectedEnt,
+}) => {
     dataObjects = Object.values(dataObjects || {});
     // const  [changeDB, setChangeDB] = useState(false);
 
@@ -78,7 +85,6 @@ const Contacts = ({ dataObjects, setSelectedEnt, setSelectedAnt, listeEnt, setRe
 
     const [contact, setContact] = useState({});
 
-
     const handleClose = (content) => {
         const actions = {
             suppr: () => setShowModalSuppr(false),
@@ -86,7 +92,7 @@ const Contacts = ({ dataObjects, setSelectedEnt, setSelectedAnt, listeEnt, setRe
             add: () => setShowModalAdd(false),
         };
         // Exécuter l'action correspondant à "content", s'il existe ?. : opérateur d'accès optionnel , n'agit que si cela existe
-        actions[content]?.(); 
+        actions[content]?.();
     };
 
     const contactModal = (content, contact) => {
@@ -100,14 +106,15 @@ const Contacts = ({ dataObjects, setSelectedEnt, setSelectedAnt, listeEnt, setRe
         setContact(contact);
     };
 
-    const changeAnt= (event) =>{
+    const changeAnt = (event) => {
         setSelectedAnt(event.target.value);
-    }  
-    const changeEnt= (event) =>{
+        
+       
+    };
+    const changeEnt = (event) => {
         setSelectedEnt(event.target.value);
-    }  
-    
-    
+    };
+
     return (
         <>
             <ContactDiv>
@@ -132,10 +139,22 @@ const Contacts = ({ dataObjects, setSelectedEnt, setSelectedAnt, listeEnt, setRe
                             name="selectEnt"
                             id="selectEnt"
                             onChange={(event) => changeEnt(event)}
+                            value={selectedEnt}
                         >
-                            <option value="All">Toutes</option>
-                            {listeEnt.map((element,index) => (
-                                <option key={index} value={element}>
+                            <option
+                                value="All"
+                                // selected={selectedAnt === "All" ? true : false}
+                            >
+                                Toutes
+                            </option>
+                            {listeEnt.map((element, index) => (
+                                <option
+                                    key={index}
+                                    value={element}
+                                    // selected={
+                                    //     selectedEnt === element ? true : false
+                                    // }
+                                >
                                     {element}
                                 </option>
                             ))}
@@ -147,11 +166,32 @@ const Contacts = ({ dataObjects, setSelectedEnt, setSelectedAnt, listeEnt, setRe
                             name="selectAnt"
                             id="selectAnt"
                             onChange={(event) => changeAnt(event)}
+                            value={selectedAnt}
                         >
-                            <option value="All">Toutes</option>
-                            <option value="CI">Côte d'Ivoire</option>
-                            <option value="To">Togo</option>
-                            <option value="Be">Bénin</option>
+                            <option
+                                value="All"
+                                // selected={selectedAnt === "All" ? true : false}
+                            >
+                                Toutes
+                            </option>
+                            <option
+                                value="CI"
+                                // selected={selectedAnt === "CI" ? true : false}
+                            >
+                                Côte d'Ivoire
+                            </option>
+                            <option
+                                value="To"
+                                // selected={selectedAnt === "To" ? true : false}
+                            >
+                                Togo
+                            </option>
+                            <option
+                                value="Be"
+                                // selected={selectedAnt === "Be" ? true : false}
+                            >
+                                Bénin
+                            </option>
                         </select>
                     </div>
                 </StyledFilters>

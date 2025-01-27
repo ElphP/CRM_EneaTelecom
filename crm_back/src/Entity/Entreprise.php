@@ -38,19 +38,19 @@ class Entreprise
     /**
      * @var Collection<int, User>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'entreprise')]
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'entreprise', cascade: ["remove"])]
     private Collection $users;
 
     /**
      * @var Collection<int, Contact>
      */
-    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'entreprise')]
+    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'entreprise', cascade:["remove"])]
     private Collection $contacts;
 
     /**
      * @var Collection<int, Projet>
      */
-    #[ORM\OneToMany(targetEntity: Projet::class, mappedBy: 'entreprise')]
+    #[ORM\OneToMany(targetEntity: Projet::class, mappedBy: 'entreprise', cascade: ["remove"])]
     private Collection $projets;
 
     public function __construct()

@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import colors from "../../utils/style/colors";
-import iconeTel from "../../assets/images/icones/phone.png";
-import iconeMail from "../../assets/images/icones/mail.png";
-import iconeLocation from "../../assets/images/icones/location.png";
-import imgTrash from "../../assets/images/icones/trash.png";
-import imgModify from "../../assets/images/icones/modify.png";
+import colors from "../../../utils/style/colors";
+import iconeTel from "../../../assets/images/icones/phone.png";
+import iconeMail from "../../../assets/images/icones/mail.png";
+import iconeLocation from "../../../assets/images/icones/location.png";
+import imgTrash from "../../../assets/images/icones/trash.png";
+import imgModify from "../../../assets/images/icones/modify.png";
 
 const StyledContactCard = styled.div`
     display: flex;
@@ -84,7 +84,7 @@ const ContactCard = ({
     contactModal, 
     dataObject
 }) => {
-    //* CI =0, To=1, Be=2
+    
     let antenne_enea="";
     switch (dataObject.antenne_enea) {
         case "CI":

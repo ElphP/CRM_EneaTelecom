@@ -16,7 +16,7 @@ const NavContainer = styled.nav`
     flex-direction: column;
 
     /* border-right: 1px solid ${colors.gray}; */
-    background-color: #d9eafc;
+    background-color: ${colors.grayBlue};
     font-family: Oswald, sans-serif;
 `;
 
@@ -54,26 +54,26 @@ function Nav({ handleClick }) {
         },
         {
             src: societe,
-            alt: "iconDashBoard",
-            id: "societe",
+            alt: "iconSociete",
+            id: "entreprise",
             label: "Entreprises",
         },
         {
             src: contact,
-            alt: "iconDashBoard",
+            alt: "iconContact",
             id: "contact",
             label: "Contacts",
         },
         {
             src: offres,
-            alt: "iconDashBoard",
-            id: "offres",
+            alt: "iconOffre",
+            id: "offre",
             label: "Offres",
         },
         {
             src: projets,
-            alt: "iconDashBoard",
-            id: "projets",
+            alt: "iconProjet",
+            id: "projet",
             label: "Projets",
         },
     ];

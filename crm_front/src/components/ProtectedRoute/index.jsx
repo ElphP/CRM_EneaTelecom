@@ -20,7 +20,7 @@ const ProtectedRoute = ({ allowedRoles, token, children }) => {
             allowedRoles &&
             !allowedRoles.some((role) => decodedToken.roles.includes(role))
         ) {
-            return <Navigate to="/Unauthorized" replace />;
+            return <Navigate to="/login" replace />;
         }
 
         return children;

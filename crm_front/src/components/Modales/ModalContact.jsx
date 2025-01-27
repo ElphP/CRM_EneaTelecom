@@ -23,7 +23,7 @@ const ModalContainer = styled.div`
     border-radius: 8px;
     text-align: center;
     width: ${({ content }) => (content === "suppr" ? "500px" : "750px")};
-    height: ${({ content }) => (content === "suppr" ? "200px" : "500px")};
+    height: ${({ content }) => (content === "suppr" ? "300px" : "500px")};
     padding: 30px;
     display: flex;
     flex-direction: column;
@@ -41,6 +41,19 @@ const ModalContainer = styled.div`
         font-size: 1.6rem;
         font-weight: bold;
     }
+    .warning {
+        color: ${colors.primary};
+        font-weight: bold;
+        font-size: 1.4rem;
+    }
+    .error {
+        color: red;
+        font-weight: bold;
+        font-size: 1.4rem;
+    }
+    .underlined  {
+        text-decoration: underline;
+    }
 `;
 
 const Formulaire = styled.form`
@@ -48,7 +61,8 @@ const Formulaire = styled.form`
     flex-direction: column;
     .row {
         display: flex;
-        justify-content: space-around;
+        justify-content: center;
+        gap: 15px;
         margin: 10px;
     }
     .row > label {
@@ -108,9 +122,11 @@ const ModalContact = ({
         mail1: "",
         mail2: "",
         adresse: "",
-        cp: "",
+        CP: "",
         ville: "",
     });
+
+const [messageError, setMessageError] = useState("");
 
     useEffect(() => {
         if (contact) {
@@ -123,7 +139,7 @@ const ModalContact = ({
         const { name, value } = e.target;
         setDataContact((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: value || "",
         }));
     };
 
@@ -142,13 +158,25 @@ const ModalContact = ({
                     }
                 );
                 const deletedContact = await response.json();
-
+                
+                
                 if (!response.ok) {
-                    console.error("Erreur de l'effacement du contact"+deletedContact.error);
+                 
+                  
+                    
+                    if (deletedContact.error_code === "CONTACT_HAS_PROJECTS") {
+                        setMessageError(deletedContact.message);
+                    } else {
+                        console.error(
+                            "Erreur de l'effacement du contact " +
+                                deletedContact.error
+                        );
+                    }
                 } else {
                     
                     setRefreshFlag((prev) => !prev);
                     handleClose("suppr");
+                   
                 }
             } catch (error) {
                 console.error("Erreur lors de l'effacement du contact", error);
@@ -170,7 +198,7 @@ const ModalContact = ({
         formData.append("mail1", dataContact.mail1);
         formData.append("mail2", dataContact.mail2);
         formData.append("adresse", dataContact.adresse);
-        formData.append("cp", dataContact.cp);
+        formData.append("CP", dataContact.CP);
         formData.append("ville", dataContact.ville);
         return formData;
     };
@@ -189,6 +217,8 @@ const ModalContact = ({
 
             const data = await response.json();
             if (!response.ok) {
+               
+                
                 console.error(data.error);
             } else {
                
@@ -231,8 +261,13 @@ const ModalContact = ({
                         <h2>Supprimer un contact</h2>
                         <p>Voulez-vous supprimer le contact</p>
                         <p className="nameSuppr">
-                            {contact.nom.toUpperCase()} {contact.prenom }?
+                            {contact.nom.toUpperCase()} {contact.prenom}?
                         </p>
+                        {messageError===""? <span className="warning">
+                            (<span className="underlined">Attention:</span> ce contact ne pourra plus accéder au CRM!)
+                        </span>
+                       :
+                        <span className="error">{messageError}</span>}
                     </div>
                 )}
                 {content === "update" && <h2>Modifier un contact</h2>}
@@ -240,7 +275,7 @@ const ModalContact = ({
                 {(content === "add" || content === "update") && (
                     <Formulaire>
                         <div className="row">
-                            <label htmlFor="antenne_enea">
+                            {/* <label htmlFor="antenne_enea">
                                 Antenne EneaTelecom
                             </label>
                             <select
@@ -253,7 +288,7 @@ const ModalContact = ({
                                 <option value="CI">Côte d'Ivoire</option>
                                 <option value="To">Togo</option>
                                 <option value="Be">Bénin</option>
-                            </select>
+                            </select> */}
                             <div>
                                 <input
                                     type="radio"
@@ -264,6 +299,7 @@ const ModalContact = ({
                                     checked={
                                         dataContact.sexe === "M" ? true : false
                                     }
+                                    required
                                 />
                                 <label htmlFor="M"> Homme</label>
                             </div>
@@ -278,6 +314,7 @@ const ModalContact = ({
                                     checked={
                                         dataContact.sexe === "F" ? true : false
                                     }
+                                    required
                                 />
                                 <label htmlFor="F"> Femme</label>
                             </div>
@@ -290,6 +327,7 @@ const ModalContact = ({
                                 id="nom"
                                 value={dataContact.nom}
                                 onChange={handleChange}
+                                required
                             />
 
                             <label htmlFor="prenom">Prénom</label>
@@ -308,9 +346,10 @@ const ModalContact = ({
                                 name="entreprise"
                                 id="entreprise"
                                 onChange={handleChange}
+                                required
                             >
                                 <option value=""></option>
-                                {listeEnt.map((element,index) =>
+                                {listeEnt.map((element, index) =>
                                     element === dataContact.entreprise ? (
                                         <option
                                             key={index}
@@ -334,6 +373,7 @@ const ModalContact = ({
                                 id="fonction"
                                 value={dataContact.fonction}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="row">
@@ -380,18 +420,17 @@ const ModalContact = ({
                                 type="text"
                                 name="adresse"
                                 id="adresse"
-                               
                                 value={dataContact.adresse}
                                 onChange={handleChange}
                             />
                         </div>
                         <div className="row">
-                            <label htmlFor="cp">CP</label>
+                            <label htmlFor="CP">CP</label>
                             <input
                                 type="text"
-                                name="cp"
-                                id="cp"
-                                value={dataContact.cp}
+                                name="CP"
+                                id="CP"
+                                value={dataContact.CP}
                                 onChange={handleChange}
                             />
 
